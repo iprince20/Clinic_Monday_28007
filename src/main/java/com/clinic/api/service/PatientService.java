@@ -25,6 +25,10 @@ public class PatientService {
 		return patientRepository.findById(id);
 	}
 
+	public List<Patient> findByLastNameIgnoreCase(String lastName) {
+		return patientRepository.findByLastNameIgnoreCaseOrderByFirstNameAsc(lastName);
+	}
+
 	public Patient save(Patient patient) {
 		return patientRepository.save(patient);
 	}

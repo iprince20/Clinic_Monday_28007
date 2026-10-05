@@ -1,0 +1,52 @@
+package com.clinic.api.controller;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.clinic.api.model.Patient;
+import com.clinic.api.service.PatientService;
+
+@RestController
+@RequestMapping("/api/patients")
+public class PatientController {
+
+    private final PatientService patientService;
+
+    public PatientController(PatientService patientService) {
+        this.patientService = patientService;
+    }
+
+    @GetMapping
+    public List<Patient> getAllPatients() {
+        return patientService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public Optional<Patient> getPatientById(@PathVariable Long id) {
+        return patientService.findById(id);
+    }
+
+    @PostMapping
+    public Patient createPatient(@RequestBody Patient patient) {
+        return patientService.save(patient);
+    }
+
+    @PutMapping("/{id}")
+    public Patient updatePatient(@PathVariable Long id, @RequestBody Patient patientDetails) {
+        return patientService.update(id, patientDetails).orElse(null);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deletePatient(@PathVariable Long id) {
+        patientService.deleteById(id);
+    }
+}

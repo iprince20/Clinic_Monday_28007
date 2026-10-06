@@ -30,6 +30,11 @@ public class SpecializationController {
         return specializationService.findAll();
     }
 
+    @GetMapping("/unused")
+    public List<Specialization> getUnusedSpecializations() {
+        return specializationService.findUnused();
+    }
+
     @GetMapping("/{id}")
     public Optional<Specialization> getSpecializationById(@PathVariable Long id) {
         return specializationService.findById(id);

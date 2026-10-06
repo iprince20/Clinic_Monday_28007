@@ -36,6 +36,11 @@ public class PatientController {
         return patientService.findByLastNameIgnoreCase(lastName);
     }
 
+    @GetMapping("/of-doctor/{doctorId}")
+    public List<Patient> getPatientsOfDoctor(@PathVariable Long doctorId) {
+        return patientService.findByDoctorId(doctorId);
+    }
+
     @GetMapping("/{id}")
     public Optional<Patient> getPatientById(@PathVariable Long id) {
         return patientService.findById(id);

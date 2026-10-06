@@ -21,6 +21,10 @@ public class SpecializationService {
         return specializationRepository.findAll();
     }
 
+    public List<Specialization> findUnused() {
+        return specializationRepository.findUnusedSpecializations();
+    }
+
     public Optional<Specialization> findById(Long id) {
         return specializationRepository.findById(id);
     }

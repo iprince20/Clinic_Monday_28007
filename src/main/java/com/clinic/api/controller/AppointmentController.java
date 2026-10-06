@@ -1,5 +1,6 @@
 package com.clinic.api.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +40,12 @@ public class AppointmentController {
 
     @GetMapping("/by-status")
     public List<Appointment> getAppointmentsByStatus(@RequestParam("status") AppointmentStatus status) {
-    return appointmentService.findByStatus(status);
+        return appointmentService.findByStatus(status);
+    }
+
+    @GetMapping("/between")
+    public List<Appointment> getAppointmentsBetween(@RequestParam String start, @RequestParam String end) {
+        return appointmentService.findBetween(LocalDate.parse(start), LocalDate.parse(end));
     }
 
     @PostMapping({"", "/save"})

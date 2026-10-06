@@ -1,5 +1,6 @@
 package com.clinic.api.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,8 +39,12 @@ public class AppointmentService {
     }
 
     public List<Appointment> findByStatus(AppointmentStatus status) {
-    return appointmentRepository.findByStatusOrderByAppointmentDateAsc(status);
-}
+        return appointmentRepository.findByStatusOrderByAppointmentDateAsc(status);
+    }
+
+    public List<Appointment> findBetween(LocalDate start, LocalDate end) {
+        return appointmentRepository.findByAppointmentDateBetweenOrderByAppointmentDateAsc(start, end);
+    }
 
     public Appointment save(Appointment appointment) {
         resolveReferences(appointment);
@@ -48,6 +53,10 @@ public class AppointmentService {
         }
         if (appointment.getStatus() == null) {
             appointment.setStatus(AppointmentStatus.SCHEDULED);
+        }
+        if (appointmentRepository.existsByDoctorAndAppointmentDateAndStatusNot(
+                appointment.getDoctor(), appointment.getAppointmentDate(), AppointmentStatus.CANCELLED)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Doctor is already booked on that date");
         }
         return appointmentRepository.save(appointment);
     }

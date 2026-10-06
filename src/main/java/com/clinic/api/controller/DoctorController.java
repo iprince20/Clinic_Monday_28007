@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +28,16 @@ public class DoctorController {
     @GetMapping
     public List<Doctor> getAllDoctors() {
         return doctorService.findAll();
+    }
+
+    @GetMapping("/by-specialization")
+    public List<Doctor> getDoctorsBySpecialization(@RequestParam String name) {
+        return doctorService.findBySpecializationName(name);
+    }
+
+    @GetMapping("/without-office")
+    public List<Doctor> getDoctorsWithoutOffice() {
+        return doctorService.findWithoutOffice();
     }
 
     @GetMapping("/{id}")

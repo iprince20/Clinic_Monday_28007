@@ -37,6 +37,14 @@ public class DoctorService {
 		return doctorRepository.findById(id);
 	}
 
+	public List<Doctor> findBySpecializationName(String name) {
+		return doctorRepository.findBySpecializationName(name);
+	}
+
+	public List<Doctor> findWithoutOffice() {
+		return doctorRepository.findWithoutOffice();
+	}
+
 	public Doctor save(Doctor doctor) {
 		doctor.setOffice(resolveOffice(doctor.getOffice()));
 		doctor.setSpecializations(resolveSpecializations(doctor.getSpecializations()));

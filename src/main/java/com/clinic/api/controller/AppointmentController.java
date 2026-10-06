@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.clinic.api.model.Appointment;
+import com.clinic.api.model.AppointmentStatus;
 import com.clinic.api.service.AppointmentService;
 
 @RestController
@@ -33,6 +35,11 @@ public class AppointmentController {
     @GetMapping("/{id}")
     public Optional<Appointment> getAppointmentById(@PathVariable Long id) {
         return appointmentService.findById(id);
+    }
+
+    @GetMapping("/by-status")
+    public List<Appointment> getAppointmentsByStatus(@RequestParam("status") AppointmentStatus status) {
+    return appointmentService.findByStatus(status);
     }
 
     @PostMapping({"", "/save"})

@@ -37,6 +37,10 @@ public class AppointmentService {
         return appointmentRepository.findById(id);
     }
 
+    public List<Appointment> findByStatus(AppointmentStatus status) {
+    return appointmentRepository.findByStatusOrderByAppointmentDateAsc(status);
+}
+
     public Appointment save(Appointment appointment) {
         resolveReferences(appointment);
         if (appointment.getAppointmentDate() == null) {

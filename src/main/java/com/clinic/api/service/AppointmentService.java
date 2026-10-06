@@ -4,8 +4,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.clinic.api.model.Appointment;
@@ -44,6 +47,25 @@ public class AppointmentService {
 
     public List<Appointment> findBetween(LocalDate start, LocalDate end) {
         return appointmentRepository.findByAppointmentDateBetweenOrderByAppointmentDateAsc(start, end);
+    }
+
+    public List<Object[]> countByStatus() {
+        return appointmentRepository.countAppointmentsByStatus();
+    }
+
+    public Page<Appointment> findAll(Pageable pageable) {
+        return appointmentRepository.findAll(pageable);
+    }
+
+    @Transactional
+    public int cancelDay(Long doctorId, LocalDate date) {
+        return appointmentRepository.cancelAppointmentsForDoctorOnDate(doctorId, date,
+                AppointmentStatus.COMPLETED, AppointmentStatus.CANCELLED);
+    }
+
+    @Transactional
+    public int deleteCancelledBefore(LocalDate date) {
+        return appointmentRepository.deleteAppointmentsBeforeDate(AppointmentStatus.CANCELLED, date);
     }
 
     public Appointment save(Appointment appointment) {

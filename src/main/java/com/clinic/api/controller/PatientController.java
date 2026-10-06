@@ -41,6 +41,11 @@ public class PatientController {
         return patientService.findByDoctorId(doctorId);
     }
 
+    @GetMapping("/frequent")
+    public List<Patient> getFrequentPatients(@RequestParam long min) {
+        return patientService.findFrequent(min);
+    }
+
     @GetMapping("/{id}")
     public Optional<Patient> getPatientById(@PathVariable Long id) {
         return patientService.findById(id);

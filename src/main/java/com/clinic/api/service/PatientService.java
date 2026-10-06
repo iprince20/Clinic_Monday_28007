@@ -41,6 +41,10 @@ public class PatientService {
 		return patientRepository.findDistinctPatientsByDoctorId(doctorId);
 	}
 
+	public List<Patient> findFrequent(long min) {
+		return patientRepository.findFrequentPatients(min);
+	}
+
 	public Patient save(Patient patient) {
 		return patientRepository.save(patient);
 	}

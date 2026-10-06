@@ -3,6 +3,7 @@ package com.clinic.api.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.clinic.api.model.Office;
@@ -19,6 +20,10 @@ public class OfficeService {
 
 	public List<Office> findAll() {
 		return officeRepository.findAll();
+	}
+
+	public List<Object[]> findBusiestOffice() {
+		return officeRepository.findBusiestOffice(PageRequest.of(0, 1));
 	}
 
 	public Optional<Office> findById(Long id) {

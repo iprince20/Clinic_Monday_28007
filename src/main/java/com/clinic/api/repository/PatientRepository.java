@@ -16,4 +16,8 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 
 	@Query("SELECT DISTINCT a.patient FROM Appointment a WHERE a.doctor.id = :doctorId")
 	List<Patient> findDistinctPatientsByDoctorId(@Param("doctorId") Long doctorId);
+
+	@Query("SELECT a.patient FROM Appointment a GROUP BY a.patient "
+			+ "HAVING COUNT(a) >= :min ORDER BY COUNT(a) DESC")
+	List<Patient> findFrequentPatients(@Param("min") long min);
 }

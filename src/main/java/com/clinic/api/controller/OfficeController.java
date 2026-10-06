@@ -22,6 +22,15 @@ public class OfficeController {
         return officeService.findAll();
     }
 
+    @GetMapping("/busiest")
+    public Object getBusiestOffice() {
+        List<Object[]> offices = officeService.findBusiestOffice();
+        if (offices.isEmpty()) {
+            return "No appointments yet";
+        }
+        return offices.get(0);
+    }
+
     @GetMapping("/{id}")
     public Optional<Office> getOfficeById(@PathVariable Long id) {
         return officeService.findById(id);

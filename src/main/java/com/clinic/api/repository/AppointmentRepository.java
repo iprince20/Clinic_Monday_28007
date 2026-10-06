@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.clinic.api.model.Appointment;
@@ -18,4 +21,17 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     boolean existsByDoctorAndAppointmentDateAndStatusNot(Doctor doctor, LocalDate appointmentDate,
             AppointmentStatus status);
+
+        @Query("SELECT a.status, COUNT(a) FROM Appointment a GROUP BY a.status")
+        List<Object[]> countAppointmentsByStatus();
+
+        @Modifying
+        @Query("UPDATE Appointment a SET a.status = :cancelled "
+            + "WHERE a.doctor.id = :doctorId AND a.appointmentDate = :date AND a.status <> :completed")
+        int cancelAppointmentsForDoctorOnDate(@Param("doctorId") Long doctorId, @Param("date") LocalDate date,
+            @Param("completed") AppointmentStatus completed, @Param("cancelled") AppointmentStatus cancelled);
+
+        @Modifying
+        @Query("DELETE FROM Appointment a WHERE a.status = :status AND a.appointmentDate < :date")
+        int deleteAppointmentsBeforeDate(@Param("status") AppointmentStatus status, @Param("date") LocalDate date);
 }

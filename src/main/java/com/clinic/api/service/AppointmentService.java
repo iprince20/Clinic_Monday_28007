@@ -120,6 +120,35 @@ public class AppointmentService {
         return new AppointmentStatusUpdateResult(HttpStatus.OK, "Appointment status updated successfully");
     }
 
+    public AppointmentStatusUpdateResult rescheduleAppointment(Long id, LocalDate newDate) {
+        Optional<Appointment> appointmentOpt = appointmentRepository.findById(id);
+        if (appointmentOpt.isEmpty()) {
+            return new AppointmentStatusUpdateResult(HttpStatus.NOT_FOUND,
+                    "The appointment with that id does not exist");
+        }
+
+        Appointment appointment = appointmentOpt.get();
+        if (appointment.getStatus() == AppointmentStatus.COMPLETED
+                || appointment.getStatus() == AppointmentStatus.CANCELLED) {
+            return new AppointmentStatusUpdateResult(HttpStatus.BAD_REQUEST,
+                    "A " + appointment.getStatus() + " appointment cannot be rescheduled");
+        }
+        if (newDate == null || newDate.isBefore(LocalDate.now())) {
+            return new AppointmentStatusUpdateResult(HttpStatus.BAD_REQUEST,
+                    "Appointment date cannot be in the past");
+        }
+        if (appointmentRepository.existsByDoctorAndAppointmentDateAndStatusNotAndIdNot(
+                appointment.getDoctor(), newDate, AppointmentStatus.CANCELLED, id)) {
+            return new AppointmentStatusUpdateResult(HttpStatus.CONFLICT,
+                    "Doctor is already booked on that date");
+        }
+
+        appointment.setAppointmentDate(newDate);
+        appointment.setStatus(AppointmentStatus.SCHEDULED);
+        appointmentRepository.save(appointment);
+        return new AppointmentStatusUpdateResult(HttpStatus.OK, "Appointment rescheduled successfully");
+    }
+
     public void deleteById(Long id) {
         appointmentRepository.deleteById(id);
     }

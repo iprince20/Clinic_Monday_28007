@@ -22,6 +22,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     boolean existsByDoctorAndAppointmentDateAndStatusNot(Doctor doctor, LocalDate appointmentDate,
             AppointmentStatus status);
 
+    boolean existsByDoctorAndAppointmentDateAndStatusNotAndIdNot(Doctor doctor, LocalDate appointmentDate,
+            AppointmentStatus status, Long appointmentId);
+
         @Query("SELECT a.status, COUNT(a) FROM Appointment a GROUP BY a.status")
         List<Object[]> countAppointmentsByStatus();
 

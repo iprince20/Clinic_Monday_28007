@@ -95,6 +95,15 @@ public class AppointmentController {
         return ResponseEntity.status(result.getStatus()).body(result.getMessage());
     }
 
+    @PatchMapping("/{id}/reschedule")
+    public ResponseEntity<String> rescheduleAppointment(
+            @PathVariable Long id,
+            @RequestParam("newDate") String newDate) {
+        AppointmentService.AppointmentStatusUpdateResult result =
+                appointmentService.rescheduleAppointment(id, LocalDate.parse(newDate));
+        return ResponseEntity.status(result.getStatus()).body(result.getMessage());
+    }
+
     @PutMapping("/{id}")
     public Appointment updateAppointment(@PathVariable Long id, @RequestBody Appointment appointmentDetails) {
         return appointmentService.update(id, appointmentDetails).orElse(null);

@@ -45,6 +45,29 @@ public class DoctorService {
 		return doctorRepository.findWithoutOffice();
 	}
 
+	public DoctorSpecializationResult moveDoctorToOffice(Long doctorId, Integer officeNumber) {
+		Optional<Doctor> doctorOpt = doctorRepository.findById(doctorId);
+		if (doctorOpt.isEmpty()) {
+			return new DoctorSpecializationResult(HttpStatus.NOT_FOUND, "The doctor with that id does not exist");
+		}
+
+		Optional<Office> officeOpt = officeRepository.findByOfficeNumber(officeNumber);
+		if (officeOpt.isEmpty()) {
+			return new DoctorSpecializationResult(HttpStatus.NOT_FOUND,
+					"The office with that office number does not exist");
+		}
+
+		Office newOffice = officeOpt.get();
+		Doctor doctor = doctorOpt.get();
+		if (doctorRepository.existsByOfficeAndIdNot(newOffice, doctorId)) {
+			return new DoctorSpecializationResult(HttpStatus.CONFLICT, "That office is taken by other doctor");
+		}
+
+		doctor.setOffice(newOffice);
+		doctorRepository.save(doctor);
+		return new DoctorSpecializationResult(HttpStatus.OK, "Office changed successfully");
+	}
+
 	public Doctor save(Doctor doctor) {
 		doctor.setOffice(resolveOffice(doctor.getOffice()));
 		doctor.setSpecializations(resolveSpecializations(doctor.getSpecializations()));
@@ -139,5 +162,23 @@ public class DoctorService {
 							"Specialization not found with id " + specialization.getId())));
 		}
 		return resolved;
+	}
+
+	public static class DoctorSpecializationResult {
+		private final HttpStatus status;
+		private final String message;
+
+		public DoctorSpecializationResult(HttpStatus status, String message) {
+			this.status = status;
+			this.message = message;
+		}
+
+		public HttpStatus getStatus() {
+			return status;
+		}
+
+		public String getMessage() {
+			return message;
+		}
 	}
 }

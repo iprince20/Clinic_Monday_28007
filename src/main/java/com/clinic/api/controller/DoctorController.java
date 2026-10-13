@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,6 +41,15 @@ public class DoctorController {
     @GetMapping("/without-office")
     public List<Doctor> getDoctorsWithoutOffice() {
         return doctorService.findWithoutOffice();
+    }
+
+    @PatchMapping("/{doctorId}/office")
+    public ResponseEntity<String> moveDoctorToOffice(
+            @PathVariable Long doctorId,
+            @RequestParam Integer officeNumber) {
+        DoctorService.DoctorSpecializationResult result =
+                doctorService.moveDoctorToOffice(doctorId, officeNumber);
+        return ResponseEntity.status(result.getStatus()).body(result.getMessage());
     }
 
     @GetMapping("/{id}")

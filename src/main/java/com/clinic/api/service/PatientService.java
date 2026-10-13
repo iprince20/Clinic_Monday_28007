@@ -53,6 +53,7 @@ public class PatientService {
 		return patientRepository.findById(id).map(patient -> {
 			patient.setFirstName(patientDetails.getFirstName());
 			patient.setLastName(patientDetails.getLastName());
+			patient.setSsNumber(patientDetails.getSsNumber());
 			patient.setEmail(patientDetails.getEmail());
 			patient.setPhone(patientDetails.getPhone());
 			return patientRepository.save(patient);

@@ -73,9 +73,10 @@ public class AppointmentService {
         if (appointment.getAppointmentDate() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Appointment date is required");
         }
-        if (appointment.getStatus() == null) {
-            appointment.setStatus(AppointmentStatus.SCHEDULED);
+        if (appointment.getAppointmentDate().isBefore(LocalDate.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Appointment date cannot be in the past");
         }
+        appointment.setStatus(AppointmentStatus.SCHEDULED);
         if (appointmentRepository.existsByDoctorAndAppointmentDateAndStatusNot(
                 appointment.getDoctor(), appointment.getAppointmentDate(), AppointmentStatus.CANCELLED)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Doctor is already booked on that date");

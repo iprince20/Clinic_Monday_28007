@@ -93,11 +93,31 @@ public class AppointmentService {
             appointment.setDoctor(appointmentDetails.getDoctor());
             appointment.setPatient(appointmentDetails.getPatient());
             appointment.setAppointmentDate(appointmentDetails.getAppointmentDate());
-            appointment.setStatus(appointmentDetails.getStatus() == null
-                    ? AppointmentStatus.SCHEDULED
-                    : appointmentDetails.getStatus());
             return appointmentRepository.save(appointment);
         });
+    }
+
+    public AppointmentStatusUpdateResult updateAppointmentStatus(Long id, AppointmentStatus newStatus) {
+        Optional<Appointment> appointmentOpt = appointmentRepository.findById(id);
+        if (appointmentOpt.isEmpty()) {
+            return new AppointmentStatusUpdateResult(HttpStatus.NOT_FOUND,
+                    "The appointment with that id does not exist");
+        }
+
+        Appointment appointment = appointmentOpt.get();
+        AppointmentStatus currentStatus = appointment.getStatus();
+        boolean validTransition = (currentStatus == AppointmentStatus.SCHEDULED
+                && (newStatus == AppointmentStatus.CONFIRMED || newStatus == AppointmentStatus.CANCELLED))
+                || (currentStatus == AppointmentStatus.CONFIRMED
+                        && (newStatus == AppointmentStatus.COMPLETED || newStatus == AppointmentStatus.CANCELLED));
+        if (!validTransition) {
+            return new AppointmentStatusUpdateResult(HttpStatus.BAD_REQUEST,
+                    "Cannot change status from " + currentStatus + " to " + newStatus);
+        }
+
+        appointment.setStatus(newStatus);
+        appointmentRepository.save(appointment);
+        return new AppointmentStatusUpdateResult(HttpStatus.OK, "Appointment status updated successfully");
     }
 
     public void deleteById(Long id) {
@@ -120,5 +140,23 @@ public class AppointmentService {
         appointment.setPatient(patientRepository.findById(patient.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Patient not found with id " + patient.getId())));
+    }
+
+    public static class AppointmentStatusUpdateResult {
+        private final HttpStatus status;
+        private final String message;
+
+        public AppointmentStatusUpdateResult(HttpStatus status, String message) {
+            this.status = status;
+            this.message = message;
+        }
+
+        public HttpStatus getStatus() {
+            return status;
+        }
+
+        public String getMessage() {
+            return message;
+        }
     }
 }

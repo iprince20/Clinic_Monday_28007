@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -83,6 +84,15 @@ public class AppointmentController {
     @PostMapping({"", "/save"})
     public Appointment saveAppointment(@RequestBody Appointment appointment) {
         return appointmentService.save(appointment);
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<String> updateAppointmentStatus(
+            @PathVariable Long id,
+            @RequestParam("status") AppointmentStatus status) {
+        AppointmentService.AppointmentStatusUpdateResult result =
+                appointmentService.updateAppointmentStatus(id, status);
+        return ResponseEntity.status(result.getStatus()).body(result.getMessage());
     }
 
     @PutMapping("/{id}")

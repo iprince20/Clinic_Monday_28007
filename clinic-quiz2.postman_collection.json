@@ -1,0 +1,249 @@
+{
+  "info": {
+    "_postman_id": "3158be10-d35f-4f77-a450-456522f4067b",
+    "name": "Kigali Clinic Quiz 2",
+    "description": "One request per A-D requirement plus bonus reports. C4 groups its prescription update/delete and protected appointment delete operations. Update variables to match the local database before running requests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080", "type": "string" },
+    { "key": "lastName", "value": "Uwase", "type": "string" },
+    { "key": "status", "value": "SCHEDULED", "type": "string" },
+    { "key": "appointmentId", "value": "1", "type": "string" },
+    { "key": "missingAppointmentId", "value": "99999999", "type": "string" },
+    { "key": "doctorId", "value": "1", "type": "string" },
+    { "key": "missingDoctorId", "value": "99999999", "type": "string" },
+    { "key": "patientId", "value": "1", "type": "string" },
+    { "key": "patientSsNumber", "value": "1234567890123456", "type": "string" },
+    { "key": "officeNumber", "value": "2", "type": "string" },
+    { "key": "appointmentDate", "value": "2026-10-30", "type": "string" },
+    { "key": "newDate", "value": "2026-10-31", "type": "string" },
+    { "key": "nextStatus", "value": "CONFIRMED", "type": "string" },
+    { "key": "invalidStatus", "value": "SCHEDULED", "type": "string" },
+    { "key": "prescriptionId", "value": "00000000-0000-0000-0000-000000000001", "type": "string" },
+    { "key": "startDate", "value": "2026-10-01", "type": "string" },
+    { "key": "endDate", "value": "2026-10-31", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "A1",
+      "description": "Patients by last name, ignoring case and ordered by first name.",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/patients/by-last-name?lastName={{lastName}}"
+      },
+      "response": []
+    },
+    {
+      "name": "A2",
+      "description": "Appointments by status, ordered by appointment date.",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/appointments/by-status?status={{status}}"
+      },
+      "response": []
+    },
+    {
+      "name": "A3",
+      "description": "Appointments between inclusive start and end dates.",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/appointments/between?start={{startDate}}&end={{endDate}}"
+      },
+      "response": []
+    },
+    {
+      "name": "A4",
+      "description": "Move a doctor to a free office. Use an occupied office to demonstrate HTTP 409.",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "url": "{{baseUrl}}/api/doctors/{{doctorId}}/office?officeNumber={{officeNumber}}"
+      },
+      "response": []
+    },
+    {
+      "name": "B1",
+      "description": "Create a safe appointment. A future free date succeeds; a past date returns HTTP 400 and an already-booked doctor/date returns HTTP 409. Status in the body is ignored; new appointments start SCHEDULED.",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"doctor\": { \"id\": {{doctorId}} },\n  \"patient\": { \"id\": {{patientId}} },\n  \"appointmentDate\": \"{{appointmentDate}}\",\n  \"status\": \"COMPLETED\"\n}",
+          "options": {
+            "raw": { "language": "json" }
+          }
+        },
+        "url": "{{baseUrl}}/api/appointments/save"
+      },
+      "response": []
+    },
+    {
+      "name": "B2",
+      "description": "Change status using the allowed transition table. Try a valid nextStatus for HTTP 200, or an invalid transition for HTTP 400. A missing ID returns HTTP 404.",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "url": "{{baseUrl}}/api/appointments/{{appointmentId}}/status?status={{nextStatus}}"
+      },
+      "response": []
+    },
+    {
+      "name": "B3",
+      "description": "Reschedule a non-final appointment to a future date. Final appointments/past dates return HTTP 400; a date booked by another active appointment returns HTTP 409.",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "url": "{{baseUrl}}/api/appointments/{{appointmentId}}/reschedule?newDate={{newDate}}"
+      },
+      "response": []
+    },
+    {
+      "name": "C1",
+      "description": "Create a prescription for a completed appointment. Set appointmentId to a completed appointment for HTTP 201; otherwise expect HTTP 400. A missing appointment returns HTTP 404.",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"medicineName\": \"Amoxicillin\",\n  \"dosage\": \"1 tablet, 3 times a day\",\n  \"durationDays\": 7\n}",
+          "options": {
+            "raw": { "language": "json" }
+          }
+        },
+        "url": "{{baseUrl}}/api/prescriptions/save?appointmentId={{appointmentId}}"
+      },
+      "response": []
+    },
+    {
+      "name": "C2",
+      "description": "List prescriptions for an appointment. Returns an empty JSON array when it has no prescriptions; a nonexistent appointment returns HTTP 404.",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/prescriptions/appointment/{{appointmentId}}"
+      },
+      "response": []
+    },
+    {
+      "name": "C3",
+      "description": "Prescription history for a patient, newest issued date first.",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/prescriptions/patient/{{patientSsNumber}}"
+      },
+      "response": []
+    },
+    {
+      "name": "C4",
+      "description": "Prescription and appointment deletion protection operations.",
+      "item": [
+        {
+          "name": "C4 - Update prescription",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"medicineName\": \"Amoxicillin\",\n  \"dosage\": \"1 tablet, 2 times a day\",\n  \"durationDays\": 5\n}",
+              "options": {
+                "raw": { "language": "json" }
+              }
+            },
+            "url": "{{baseUrl}}/api/prescriptions/update/{{prescriptionId}}"
+          },
+          "response": []
+        },
+        {
+          "name": "C4 - Delete prescription",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/prescriptions/delete/{{prescriptionId}}"
+          },
+          "response": []
+        },
+        {
+          "name": "C4 - Block appointment delete with prescriptions",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/appointments/{{appointmentId}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "D1",
+      "description": "Doctor's agenda for a day, excluding CANCELLED appointments. A nonexistent doctor returns HTTP 404.",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/doctors/{{doctorId}}/agenda?date={{appointmentDate}}"
+      },
+      "response": []
+    },
+    {
+      "name": "D2",
+      "description": "Upcoming appointments for a patient: today or later, SCHEDULED or CONFIRMED, soonest first. An unknown SS number returns HTTP 404.",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/patients/{{patientSsNumber}}/upcoming"
+      },
+      "response": []
+    },
+    {
+      "name": "D3",
+      "description": "Search doctors by a case-insensitive substring in first or last name, ordered by last name.",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/doctors/search?name=gis"
+      },
+      "response": []
+    },
+    {
+      "name": "D4",
+      "description": "Clinic summary counts returned as one JSON object.",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/dashboard/summary"
+      },
+      "response": []
+    },
+    {
+      "name": "Bonus - Most prescribed medicines",
+      "description": "One row per medicine, with prescription count, most prescribed first.",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/prescriptions/stats/top-medicines"
+      },
+      "response": []
+    },
+    {
+      "name": "Bonus - Doctor workload",
+      "description": "Completed appointment counts per doctor during the inclusive date range, busiest first; doctors with zero are omitted.",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/doctors/workload?start={{startDate}}&end={{endDate}}"
+      },
+      "response": []
+    }
+  ]
+}

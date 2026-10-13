@@ -1,11 +1,14 @@
 package com.clinic.api.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,7 +31,7 @@ public class PrescriptionController {
     public ResponseEntity<String> savePrescription(
             @RequestParam("appointmentId") Long appointmentId,
             @RequestBody Prescription prescription) {
-        PrescriptionService.PrescriptionSaveResult result =
+        PrescriptionService.PrescriptionOperationResult result =
                 prescriptionService.savePrescription(appointmentId, prescription);
         return ResponseEntity.status(result.getStatus()).body(result.getMessage());
     }
@@ -41,5 +44,21 @@ public class PrescriptionController {
     @GetMapping("/patient/{ssNumber}")
     public List<Prescription> getPrescriptionsByPatient(@PathVariable String ssNumber) {
         return prescriptionService.getPrescriptionsByPatientSsNumber(ssNumber);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updatePrescription(
+            @PathVariable UUID id,
+            @RequestBody Prescription prescriptionDetails) {
+        PrescriptionService.PrescriptionOperationResult result =
+                prescriptionService.updatePrescription(id, prescriptionDetails);
+        return ResponseEntity.status(result.getStatus()).body(result.getMessage());
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deletePrescription(@PathVariable UUID id) {
+        PrescriptionService.PrescriptionOperationResult result =
+                prescriptionService.deletePrescription(id);
+        return ResponseEntity.status(result.getStatus()).body(result.getMessage());
     }
 }

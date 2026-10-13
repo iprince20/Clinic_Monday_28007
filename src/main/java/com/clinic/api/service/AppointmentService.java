@@ -18,6 +18,7 @@ import com.clinic.api.model.Patient;
 import com.clinic.api.repository.AppointmentRepository;
 import com.clinic.api.repository.DoctorRepository;
 import com.clinic.api.repository.PatientRepository;
+import com.clinic.api.repository.PrescriptionRepository;
 
 @Service
 public class AppointmentService {
@@ -25,12 +26,15 @@ public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
+    private final PrescriptionRepository prescriptionRepository;
 
     public AppointmentService(AppointmentRepository appointmentRepository,
-            DoctorRepository doctorRepository, PatientRepository patientRepository) {
+            DoctorRepository doctorRepository, PatientRepository patientRepository,
+            PrescriptionRepository prescriptionRepository) {
         this.appointmentRepository = appointmentRepository;
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
+        this.prescriptionRepository = prescriptionRepository;
     }
 
     public List<Appointment> findAll() {
@@ -150,6 +154,10 @@ public class AppointmentService {
     }
 
     public void deleteById(Long id) {
+        if (prescriptionRepository.existsByAppointment_Id(id)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "That appointment has prescriptions, delete them first");
+        }
         appointmentRepository.deleteById(id);
     }
 

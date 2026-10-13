@@ -12,6 +12,8 @@ import com.clinic.api.model.Patient;
 @Repository
 public interface PatientRepository extends JpaRepository<Patient, Long> {
 
+	boolean existsBySsNumber(String ssNumber);
+
 	List<Patient> findByLastNameIgnoreCaseOrderByFirstNameAsc(String lastName);
 
 	@Query("SELECT DISTINCT a.patient FROM Appointment a WHERE a.doctor.id = :doctorId")

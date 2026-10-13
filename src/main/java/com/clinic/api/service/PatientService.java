@@ -1,5 +1,6 @@
 package com.clinic.api.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,7 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.clinic.api.model.Appointment;
+import com.clinic.api.model.AppointmentStatus;
 import com.clinic.api.model.Patient;
+import com.clinic.api.repository.AppointmentRepository;
 import com.clinic.api.repository.DoctorRepository;
 import com.clinic.api.repository.PatientRepository;
 
@@ -16,10 +20,13 @@ public class PatientService {
 
 	private final PatientRepository patientRepository;
 	private final DoctorRepository doctorRepository;
+	private final AppointmentRepository appointmentRepository;
 
-	public PatientService(PatientRepository patientRepository, DoctorRepository doctorRepository) {
+	public PatientService(PatientRepository patientRepository, DoctorRepository doctorRepository,
+			AppointmentRepository appointmentRepository) {
 		this.patientRepository = patientRepository;
 		this.doctorRepository = doctorRepository;
+		this.appointmentRepository = appointmentRepository;
 	}
 
 	public List<Patient> findAll() {
@@ -43,6 +50,16 @@ public class PatientService {
 
 	public List<Patient> findFrequent(long min) {
 		return patientRepository.findFrequentPatients(min);
+	}
+
+	public List<Appointment> getUpcomingAppointments(String ssNumber) {
+		if (!patientRepository.existsBySsNumber(ssNumber)) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+					"That patient with that ssnumber does not exist");
+		}
+		return appointmentRepository
+				.findByPatient_SsNumberAndAppointmentDateGreaterThanEqualAndStatusInOrderByAppointmentDateAsc(
+						ssNumber, LocalDate.now(), List.of(AppointmentStatus.SCHEDULED, AppointmentStatus.CONFIRMED));
 	}
 
 	public Patient save(Patient patient) {

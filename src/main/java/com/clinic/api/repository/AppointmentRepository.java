@@ -20,6 +20,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Appointment> findByDoctor_IdAndAppointmentDateAndStatusNot(
             Long doctorId, LocalDate appointmentDate, AppointmentStatus status);
 
+    List<Appointment> findByPatient_SsNumberAndAppointmentDateGreaterThanEqualAndStatusInOrderByAppointmentDateAsc(
+            String ssNumber, LocalDate appointmentDate, List<AppointmentStatus> statuses);
+
     List<Appointment> findByAppointmentDateBetweenOrderByAppointmentDateAsc(LocalDate start, LocalDate end);
 
     boolean existsByDoctorAndAppointmentDateAndStatusNot(Doctor doctor, LocalDate appointmentDate,

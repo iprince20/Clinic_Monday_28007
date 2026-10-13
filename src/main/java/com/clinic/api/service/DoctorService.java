@@ -3,14 +3,18 @@ package com.clinic.api.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDate;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.clinic.api.model.Doctor;
+import com.clinic.api.model.Appointment;
+import com.clinic.api.model.AppointmentStatus;
 import com.clinic.api.model.Office;
 import com.clinic.api.model.Specialization;
+import com.clinic.api.repository.AppointmentRepository;
 import com.clinic.api.repository.DoctorRepository;
 import com.clinic.api.repository.OfficeRepository;
 import com.clinic.api.repository.SpecializationRepository;
@@ -21,12 +25,14 @@ public class DoctorService {
 	private final DoctorRepository doctorRepository;
 	private final OfficeRepository officeRepository;
 	private final SpecializationRepository specializationRepository;
+	private final AppointmentRepository appointmentRepository;
 
 	public DoctorService(DoctorRepository doctorRepository, OfficeRepository officeRepository,
-			SpecializationRepository specializationRepository) {
+			SpecializationRepository specializationRepository, AppointmentRepository appointmentRepository) {
 		this.doctorRepository = doctorRepository;
 		this.officeRepository = officeRepository;
 		this.specializationRepository = specializationRepository;
+		this.appointmentRepository = appointmentRepository;
 	}
 
 	public List<Doctor> findAll() {
@@ -43,6 +49,14 @@ public class DoctorService {
 
 	public List<Doctor> findWithoutOffice() {
 		return doctorRepository.findWithoutOffice();
+	}
+
+	public List<Appointment> getAgenda(Long doctorId, LocalDate date) {
+		if (!doctorRepository.existsById(doctorId)) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The doctor with that id does not exist");
+		}
+		return appointmentRepository.findByDoctor_IdAndAppointmentDateAndStatusNot(
+				doctorId, date, AppointmentStatus.CANCELLED);
 	}
 
 	public DoctorSpecializationResult moveDoctorToOffice(Long doctorId, Integer officeNumber) {

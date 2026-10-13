@@ -17,6 +17,9 @@ import com.clinic.api.model.Doctor;
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
     List<Appointment> findByStatusOrderByAppointmentDateAsc(AppointmentStatus status);
 
+    List<Appointment> findByDoctor_IdAndAppointmentDateAndStatusNot(
+            Long doctorId, LocalDate appointmentDate, AppointmentStatus status);
+
     List<Appointment> findByAppointmentDateBetweenOrderByAppointmentDateAsc(LocalDate start, LocalDate end);
 
     boolean existsByDoctorAndAppointmentDateAndStatusNot(Doctor doctor, LocalDate appointmentDate,

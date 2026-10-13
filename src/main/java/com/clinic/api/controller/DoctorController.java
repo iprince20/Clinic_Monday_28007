@@ -1,6 +1,7 @@
 package com.clinic.api.controller;
 
 import java.util.List;
+import java.time.LocalDate;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.clinic.api.model.Doctor;
+import com.clinic.api.model.Appointment;
 import com.clinic.api.service.DoctorService;
 
 @RestController
@@ -41,6 +43,13 @@ public class DoctorController {
     @GetMapping("/without-office")
     public List<Doctor> getDoctorsWithoutOffice() {
         return doctorService.findWithoutOffice();
+    }
+
+    @GetMapping("/{doctorId}/agenda")
+    public List<Appointment> getDoctorAgenda(
+            @PathVariable Long doctorId,
+            @RequestParam LocalDate date) {
+        return doctorService.getAgenda(doctorId, date);
     }
 
     @PatchMapping("/{doctorId}/office")

@@ -20,6 +20,12 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 	@Query("SELECT d FROM Doctor d WHERE d.office IS NULL ORDER BY d.lastName ASC")
 	List<Doctor> findWithoutOffice();
 
+	@Query("SELECT d FROM Doctor d WHERE "
+			+ "LOWER(d.firstName) LIKE LOWER(CONCAT('%', :name, '%')) "
+			+ "OR LOWER(d.lastName) LIKE LOWER(CONCAT('%', :name, '%')) "
+			+ "ORDER BY d.lastName ASC")
+	List<Doctor> searchByName(@Param("name") String name);
+
 	@Query("SELECT o.name, o.officeNumber, COUNT(a) "
 			+ "FROM Appointment a JOIN a.doctor d JOIN d.office o "
 			+ "GROUP BY o.name, o.officeNumber ORDER BY COUNT(a) DESC")

@@ -40,6 +40,11 @@ public class DoctorController {
         return doctorService.findBySpecializationName(name);
     }
 
+    @GetMapping("/search")
+    public List<Doctor> searchDoctorsByName(@RequestParam String name) {
+        return doctorService.searchByName(name);
+    }
+
     @GetMapping("/without-office")
     public List<Doctor> getDoctorsWithoutOffice() {
         return doctorService.findWithoutOffice();

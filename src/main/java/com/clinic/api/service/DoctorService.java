@@ -47,6 +47,10 @@ public class DoctorService {
 		return doctorRepository.findBySpecializationName(name);
 	}
 
+	public List<Doctor> searchByName(String name) {
+		return doctorRepository.searchByName(name);
+	}
+
 	public List<Doctor> findWithoutOffice() {
 		return doctorRepository.findWithoutOffice();
 	}

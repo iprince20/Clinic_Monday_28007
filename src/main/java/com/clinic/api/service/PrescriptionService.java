@@ -1,10 +1,12 @@
 package com.clinic.api.service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.clinic.api.model.Appointment;
 import com.clinic.api.model.AppointmentStatus;
@@ -41,6 +43,17 @@ public class PrescriptionService {
         prescription.setIssuedDate(LocalDate.now());
         prescriptionRepository.save(prescription);
         return new PrescriptionSaveResult(HttpStatus.CREATED, "Prescription saved successfully");
+    }
+
+    public List<Prescription> getPrescriptionsByAppointmentId(Long appointmentId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "The appointment with that id does not exist"));
+        return prescriptionRepository.findByAppointment(appointment);
+    }
+
+    public List<Prescription> getPrescriptionsByPatientSsNumber(String ssNumber) {
+        return prescriptionRepository.findByPatientSsNumberOrderByIssuedDateDesc(ssNumber);
     }
 
     public static class PrescriptionSaveResult {

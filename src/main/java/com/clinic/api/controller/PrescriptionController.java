@@ -1,6 +1,10 @@
 package com.clinic.api.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,5 +31,15 @@ public class PrescriptionController {
         PrescriptionService.PrescriptionSaveResult result =
                 prescriptionService.savePrescription(appointmentId, prescription);
         return ResponseEntity.status(result.getStatus()).body(result.getMessage());
+    }
+
+    @GetMapping("/appointment/{appointmentId}")
+    public List<Prescription> getPrescriptionsByAppointment(@PathVariable Long appointmentId) {
+        return prescriptionService.getPrescriptionsByAppointmentId(appointmentId);
+    }
+
+    @GetMapping("/patient/{ssNumber}")
+    public List<Prescription> getPrescriptionsByPatient(@PathVariable String ssNumber) {
+        return prescriptionService.getPrescriptionsByPatientSsNumber(ssNumber);
     }
 }

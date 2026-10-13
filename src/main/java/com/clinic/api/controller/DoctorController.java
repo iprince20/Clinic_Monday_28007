@@ -2,6 +2,8 @@ package com.clinic.api.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +55,21 @@ public class DoctorController {
     @PutMapping("/{id}")
     public Doctor updateDoctor(@PathVariable Long id, @RequestBody Doctor doctorDetails) {
         return doctorService.update(id, doctorDetails).orElse(null);
+    }
+
+    @PutMapping("/{doctorId}/specializations/{specializationId}")
+    public ResponseEntity<String> addSpecializationToDoctor(
+            @PathVariable Long doctorId,
+            @PathVariable Long specializationId) {
+        String message = doctorService.addSpecializationToDoctor(doctorId, specializationId);
+        if ("The doctor with that id does not exist".equals(message)
+                || "That specialization does not exist".equals(message)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        } else if ("The doctor already has that specialization".equals(message)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(message);
+        } else {
+            return ResponseEntity.ok(message);
+        }
     }
 
     @DeleteMapping("/{id}")

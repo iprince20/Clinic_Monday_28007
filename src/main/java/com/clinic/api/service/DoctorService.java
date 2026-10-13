@@ -65,6 +65,32 @@ public class DoctorService {
 		doctorRepository.deleteById(id);
 	}
 
+	public String addSpecializationToDoctor(Long doctorId, Long specializationId) {
+		Optional<Doctor> doctorOpt = doctorRepository.findById(doctorId);
+		if (doctorOpt.isEmpty()) {
+			return "The doctor with that id does not exist";
+		}
+
+		Optional<Specialization> specializationOpt = specializationRepository.findById(specializationId);
+		if (specializationOpt.isEmpty()) {
+			return "That specialization does not exist";
+		}
+
+		Doctor doctor = doctorOpt.get();
+		Specialization specialization = specializationOpt.get();
+		if (doctor.getSpecializations() == null) {
+			doctor.setSpecializations(new ArrayList<>());
+		}
+
+		if (doctor.getSpecializations().contains(specialization)) {
+			return "The doctor already has that specialization";
+		}
+
+		doctor.getSpecializations().add(specialization);
+		doctorRepository.save(doctor);
+		return "Specialization added to the doctor";
+	}
+
 	private Office resolveOffice(Office office) {
 		if (office == null) {
 			return null;

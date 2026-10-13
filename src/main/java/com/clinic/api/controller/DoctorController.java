@@ -45,6 +45,13 @@ public class DoctorController {
         return doctorService.searchByName(name);
     }
 
+    @GetMapping("/workload")
+    public List<Object[]> getDoctorWorkload(
+            @RequestParam LocalDate start,
+            @RequestParam LocalDate end) {
+        return doctorService.getWorkload(start, end);
+    }
+
     @GetMapping("/without-office")
     public List<Doctor> getDoctorsWithoutOffice() {
         return doctorService.findWithoutOffice();

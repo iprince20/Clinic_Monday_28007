@@ -51,6 +51,10 @@ public class DoctorService {
 		return doctorRepository.searchByName(name);
 	}
 
+	public List<Object[]> getWorkload(LocalDate start, LocalDate end) {
+		return doctorRepository.findDoctorWorkload(start, end, AppointmentStatus.COMPLETED);
+	}
+
 	public List<Doctor> findWithoutOffice() {
 		return doctorRepository.findWithoutOffice();
 	}

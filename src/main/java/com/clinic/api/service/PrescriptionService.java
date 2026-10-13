@@ -57,6 +57,10 @@ public class PrescriptionService {
         return prescriptionRepository.findByPatientSsNumberOrderByIssuedDateDesc(ssNumber);
     }
 
+    public List<Object[]> getTopMedicines() {
+        return prescriptionRepository.findTopMedicines();
+    }
+
     public PrescriptionOperationResult updatePrescription(UUID id, Prescription details) {
         Optional<Prescription> prescriptionOpt = prescriptionRepository.findById(id);
         if (prescriptionOpt.isEmpty()) {

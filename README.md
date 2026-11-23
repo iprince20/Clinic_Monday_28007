@@ -100,3 +100,21 @@ Start the API from the project root, in the same terminal where the datasource v
 Import [`clinic-quiz2.postman_collection.json`](clinic-quiz2.postman_collection.json) into Postman. Update its collection variables, especially IDs, patient SS number, and dates, to match your local database. Requests are named by requirement ID; C4 groups its update, delete, and appointment-protection requests.
 
 For a live demo, choose a valid ID/date for a successful request, then use a nonexistent ID or an invalid status/date to show an error response. The service methods enforce the business rules and response messages; Spring Data repository methods and JPQL queries perform the lookups and reports.
+
+## Office management frontend
+
+The Spring Boot API remains at the repository root, and the React frontend is a separate Vite project in `frontend/`. Run the API and frontend in separate terminals. In terminal 1, from the repository root, configure the datasource as described above and start the API:
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+In terminal 2, start the frontend:
+
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+
+Open the Vite URL (usually `http://localhost:5173`). The page loads offices from `http://localhost:8080/api/offices`, filters by office name or number, and supports deleting offices after confirmation. The Update action is intentionally disabled because updates are outside this UI's scope.

@@ -128,28 +128,8 @@ export default function App() {
 
   return (
     <main className="page-shell">
-      <header className="topbar">
-        <a className="brand" href="#" aria-label="Kigali Clinic home">
-          <span className="brand-mark" aria-hidden="true">K</span>
-          <span>Kigali Clinic</span>
-        </a>
-        <span className="topbar-label">Administration</span>
-      </header>
-
       <section className="page-content" aria-labelledby="page-title">
-        <div className="breadcrumbs">Clinic management <span>/</span> Offices</div>
-
-        <div className="page-heading">
-          <div>
-            <p className="eyebrow">Facilities</p>
-            <h1 id="page-title">Office directory</h1>
-            <p className="subtitle">Browse and manage the clinic&apos;s available offices.</p>
-          </div>
-          <div className="count-card" aria-live="polite">
-            <span className="count-label">Offices shown</span>
-            <strong>{loading || hasError ? "—" : filteredOffices.length}</strong>
-          </div>
-        </div>
+        <h1 id="page-title">Offices</h1>
 
         <section className="directory-card" aria-label="Office directory">
           <div className="toolbar">
@@ -225,10 +205,6 @@ export default function App() {
           )}
         </section>
 
-        <footer className="page-footer">
-          <span><span className="status-dot" aria-hidden="true" /> Clinic API</span>
-          <span>Office directory</span>
-        </footer>
       </section>
 
       <ConfirmationModal

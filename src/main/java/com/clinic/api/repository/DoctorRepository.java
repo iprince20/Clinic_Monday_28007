@@ -44,4 +44,6 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 	List<Office> findFreeOffices();
 
 	boolean existsByOfficeAndIdNot(Office office, Long doctorId);
+
+	boolean existsByOffice_Id(Long officeId);
 }

@@ -2,6 +2,7 @@ package com.clinic.api.controller;
 
 import com.clinic.api.model.Office;
 import com.clinic.api.service.OfficeService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,7 +53,8 @@ public class OfficeController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteOffice(@PathVariable Long id) {
-        officeService.deleteById(id);
+    public ResponseEntity<String> deleteOffice(@PathVariable Long id) {
+        OfficeService.OfficeDeleteResult result = officeService.deleteById(id);
+        return ResponseEntity.status(result.getStatus()).body(result.getMessage());
     }
 }

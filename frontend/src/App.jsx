@@ -99,7 +99,16 @@ export default function App() {
         method: "DELETE",
       });
       if (!response.ok) {
-        const details = (await response.text()).trim();
+        const responseBody = (await response.text()).trim();
+        let details = responseBody;
+        if (responseBody) {
+          try {
+            const errorBody = JSON.parse(responseBody);
+            details = errorBody.message || errorBody.detail || responseBody;
+          } catch {
+            details = responseBody;
+          }
+        }
         throw new Error(details || `Request failed (${response.status} ${response.statusText})`);
       }
 
